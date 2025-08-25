@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AivizMauiProject.Features.Home.HomePage"
+             Title="">
+
+    <Grid RowDefinitions="100,auto,*"
+          Margin="0"
+          Padding="0"
+          BackgroundColor="#EEF5FF">
+
+        <!-- ✅ ردیف ۰: خوش‌آمدگویی -->
+        <Label Text="Welcome to the Application"
+               FontSize="22"
+               FontAttributes="Bold"
+               TextColor="#2B2B2B"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               Grid.Row="0" />
+
+        <!-- ✅ ردیف ۱: توضیح کوتاه -->
+        <Label Text="Please select one of the exercises below to start."
+               FontSize="16"
+               TextColor="Gray"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               Grid.Row="1" />
+
+        <!-- ✅ ردیف ۲: لیست تمرین‌ها با دکمه -->
+        <VerticalStackLayout Grid.Row="2"
+                             Padding="20"
+                             Spacing="15"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Start">
+
+            <Button Text="Exercise1"
+                    WidthRequest="250"
+                    Clicked="GoToExercise1"
+                    BackgroundColor="#7093b5"
+                    TextColor="White"
+                    CornerRadius="10"/>
+
+            <Button Text="Exercise2"
+                    WidthRequest="250"
+                    Clicked="GoToExercise2"
+                    BackgroundColor="#7093b5"
+                    TextColor="White"
+                    CornerRadius="10"/>
+
+            <Button Text="Exercise3"
+                    WidthRequest="250"
+                    Clicked="GoToExercise3"
+                    BackgroundColor="#7093b5"
+                    TextColor="White"
+                    CornerRadius="10"/>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:AivizMauiProject.Features.Exercise3.ViewModels"
+             x:Class="AivizMauiProject.Features.Exercise3.Views.Exercise3"
+             Title="Exercise 3"
+             BackgroundColor="#EEF5FF">
+
+    <ContentPage.BindingContext>
+        <viewmodels:Exercise3ViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid x:Name="ResponsiveLayout"
+          RowDefinitions="Auto,Auto,6*,3*"
+          ColumnDefinitions="*"
+          Padding="16"
+          RowSpacing="16"
+          ColumnSpacing="0">
+
+        <!-- Buttons -->
+        <HorizontalStackLayout Grid.Row="1" Spacing="12" HorizontalOptions="Start">
+            <Border Stroke="#CCC" StrokeThickness="1" StrokeShape="RoundRectangle 8" BackgroundColor="#176B87" Padding="0">
+                <Button Text="Select Image"
+                        Command="{Binding SelectImageCommand}"
+                        BackgroundColor="#176B87"
+                        TextColor="White"
+                        CornerRadius="8"
+                        Padding="14,8" />
+            </Border>
+            <Border Stroke="#CCC" StrokeThickness="1" StrokeShape="RoundRectangle 8" BackgroundColor="#FF5252" Padding="0">
+                <Button Text="Clear Rectangles"
+                        Command="{Binding ClearRectanglesCommand}"
+                        BackgroundColor="#FF5252"
+                        TextColor="White"
+                        CornerRadius="8"
+                        Padding="14,8" />
+            </Border>
+        </HorizontalStackLayout>
+
+        <!-- WebView -->
+        <Border Grid.Row="2"
+                Stroke="#DDD"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 12"
+                BackgroundColor="#1B3C53"
+                Padding="0"
+                Margin="0">
+            <WebView x:Name="AnnotatorWebView"
+                     Source="{Binding WebViewSource}"
+                     Navigating="AnnotatorWebView_Navigating"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand"
+                     BackgroundColor="#1B3C53" />
+        </Border>
+
+        <!-- Rectangles List -->
+        <Border Grid.Row="3"
+                Stroke="#BDBDBD"
+                StrokeThickness="1.5"
+                StrokeShape="RoundRectangle 12"
+                BackgroundColor="#EEF5FF"
+                Padding="12"
+                Margin="0">
+            <ScrollView>
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="📐 Rectangles"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="#333"
+                           Margin="0,0,0,6" />
+                    <CollectionView x:Name="RectanglesCollectionView"
+                                    ItemsSource="{Binding Rectangles}"
+                                    HeightRequest="300">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" Span="2" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.EmptyView>
+                            <Label Text="No rectangles yet"
+                                   FontAttributes="Italic"
+                                   TextColor="#999"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   Margin="10" />
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Stroke="#E0E0E0"
+                                        BackgroundColor="White"
+                                        Padding="10"
+                                        Margin="6"
+                                        StrokeShape="RoundRectangle 12">
+                                    <Border.Shadow>
+                                        <Shadow Brush="Black" Opacity="0.3" Radius="6" Offset="2,2" />
+                                    </Border.Shadow>
+                                    <VerticalStackLayout Spacing="6">
+                                        <Label Text="{Binding Name}"
+                                               FontSize="14"
+                                               FontAttributes="Bold"
+                                               TextColor="#00796B"
+                                               Margin="0,0,0,4" />
+                                        <HorizontalStackLayout Spacing="12">
+                                            <Label Text="{Binding X, StringFormat='X: {0:F0}'}"
+                                                   TextColor="#333"
+                                                   FontAttributes="Bold" />
+                                            <Label Text="{Binding Y, StringFormat='Y: {0:F0}'}"
+                                                   TextColor="#333"
+                                                   FontAttributes="Bold" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Spacing="12">
+                                            <Label Text="{Binding W, StringFormat='W: {0:F0}'}"
+                                                   TextColor="#555" />
+                                            <Label Text="{Binding H, StringFormat='H: {0:F0}'}"
+                                                   TextColor="#555" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Border>
+    </Grid>
+</ContentPage>

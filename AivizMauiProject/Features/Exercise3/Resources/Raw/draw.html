@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Annotator</title>
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            background: #f4f4f4;
+        }
+
+        #wrap {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        canvas {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            border: 1px solid #ccc;
+            touch-action: none;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <canvas id="c"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('c');
+        const ctx = canvas.getContext('2d');
+
+        const img = new Image();
+        img.onload = () => {
+            const wrap = document.getElementById('wrap');
+            const maxW = wrap.clientWidth;
+            const maxH = wrap.clientHeight;
+            const ratio = Math.min(maxW / img.width, maxH / img.height);
+            canvas.width = img.width * ratio;
+            canvas.height = img.height * ratio;
+            draw();
+        };
+        img.src = "{{IMG_SRC}}";
+
+        let rects = [];
+        let mode = 'idle';
+        let current = -1;
+        let startX = 0, startY = 0;
+        let dragOffsetX = 0, dragOffsetY = 0;
+        let resizeHandle = null;
+        const HANDLE = 8;
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            rects.forEach((r, i) => {
+                ctx.strokeStyle = 'red';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(r.x, r.y, r.w, r.h);
+
+                // Rec name
+                ctx.fillStyle = 'green';
+                ctx.font = '14px sans-serif';
+                ctx.fillText(r.name ?? `R${i + 1}`, r.x + 4, r.y - 6);
+
+                drawHandles(r);
+            });
+        }
+
+        function drawHandles(r) {
+            const hs = HANDLE;
+            const handles = getHandleRects(r);
+            ctx.fillStyle = '#fff';
+            ctx.strokeStyle = 'red';
+            handles.forEach(h => {
+                ctx.fillRect(h.x, h.y, hs, hs);
+                ctx.strokeRect(h.x, h.y, hs, hs);
+            });
+        }
+
+        function getHandleRects(r) {
+            const hs = HANDLE, x = r.x, y = r.y, x2 = r.x + r.w, y2 = r.y + r.h;
+            return [
+                { x: x - hs / 2, y: y - hs / 2, pos: 'nw' },
+                { x: x2 - hs / 2, y: y - hs / 2, pos: 'ne' },
+                { x: x - hs / 2, y: y2 - hs / 2, pos: 'sw' },
+                { x: x2 - hs / 2, y: y2 - hs / 2, pos: 'se' },
+                { x: x + r.w / 2 - hs / 2, y: y - hs / 2, pos: 'n' },
+                { x: x2 - hs / 2, y: y + r.h / 2 - hs / 2, pos: 'e' },
+                { x: x + r.w / 2 - hs / 2, y: y2 - hs / 2, pos: 's' },
+                { x: x - hs / 2, y: y + r.h / 2 - hs / 2, pos: 'w' },
+            ];
+        }
+
+        function hitHandle(px, py) {
+            for (let i = rects.length - 1; i >= 0; i--) {
+                const hs = getHandleRects(rects[i]);
+                for (const h of hs) {
+                    if (px >= h.x && px <= h.x + HANDLE && py >= h.y && py <= h.y + HANDLE)
+                        return { i, handle: h.pos };
+                }
+            }
+            return null;
+        }
+
+        function hitRect(px, py) {
+            for (let i = rects.length - 1; i >= 0; i--) {
+                const r = rects[i];
+                if (px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h) return i;
+            }
+            return -1;
+        }
+
+        function normalize(r) {
+            if (r.w < 0) { r.x += r.w; r.w = -r.w; }
+            if (r.h < 0) { r.y += r.h; r.h = -r.h; }
+        }
+
+        function getPos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            const x = evt.clientX - rect.left;
+            const y = evt.clientY - rect.top;
+            return { x, y };
+        }
+
+        function sendUpdate() {
+            const payload = rects.map((r, i) => ({
+                Name: r.name ?? `R${i + 1}`,
+                X: Math.round(r.x),
+                Y: Math.round(r.y),
+                W: Math.round(r.w),
+                H: Math.round(r.h)
+            }));
+            try {
+                window.location.href = 'app://update?data=' + encodeURIComponent(JSON.stringify(payload));
+            } catch (e) { }
+        }
+
+        canvas.addEventListener('pointerdown', e => {
+            e.preventDefault();
+            const { x, y } = getPos(e);
+
+            const hr = hitHandle(x, y);
+            if (hr) {
+                mode = 'resizing';
+                current = hr.i;
+                resizeHandle = hr.handle;
+                startX = x;
+                startY = y;
+                return;
+            }
+
+            const idx = hitRect(x, y);
+            if (idx >= 0) {
+                mode = 'moving';
+                current = idx;
+                dragOffsetX = x - rects[idx].x;
+                dragOffsetY = y - rects[idx].y;
+                return;
+            }
+
+            mode = 'drawing';
+            current = rects.length;
+            const newName = `R${current + 1}`;
+            rects.push({ x: x, y: y, w: 0, h: 0, name: newName });
+            startX = x;
+            startY = y;
+            draw();
+        });
+
+        canvas.addEventListener('pointermove', e => {
+            if (current < 0) return;
+            const { x, y } = getPos(e);
+            const r = rects[current];
+
+            if (mode === 'drawing') { r.w = x - startX; r.h = y - startY; }
+            else if (mode === 'moving') { r.x = x - dragOffsetX; r.y = y - dragOffsetY; }
+            else if (mode === 'resizing') {
+                switch (resizeHandle) {
+                    case 'n': r.h += (r.y - y); r.y = y; break;
+                    case 's': r.h = y - r.y; break;
+                    case 'w': r.w += (r.x - x); r.x = x; break;
+                    case 'e': r.w = x - r.x; break;
+                    case 'nw': r.w += (r.x - x); r.x = x; r.h += (r.y - y); r.y = y; break;
+                    case 'ne': r.w = x - r.x; r.h += (r.y - y); r.y = y; break;
+                    case 'sw': r.w += (r.x - x); r.x = x; r.h = y - r.y; break;
+                    case 'se': r.w = x - r.x; r.h = y - r.y; break;
+                }
+            }
+            draw();
+        });
+
+        function endPointer() {
+            if (current >= 0) {
+                normalize(rects[current]);
+                draw();
+                sendUpdate();
+            }
+            mode = 'idle';
+            current = -1;
+            resizeHandle = null;
+        }
+
+        canvas.addEventListener('pointerup', endPointer);
+        canvas.addEventListener('pointercancel', endPointer);
+        canvas.addEventListener('pointerleave', endPointer);
+
+        function clearRects() {
+            rects = [];
+            draw();
+            sendUpdate();
+        }
+        window.clearRects = clearRects;
+
+        function setImage(dataUrl) {
+            img.src = dataUrl;
+            rects = [];
+        }
+        window.setImage = setImage;
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+</body>
+</html>

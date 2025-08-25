@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Shell
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:home="clr-namespace:AivizMauiProject.Features.Home"
+    xmlns:ex1="clr-namespace:AivizMauiProject.Features.Exercise1.Views"
+    xmlns:ex2="clr-namespace:AivizMauiProject.Features.Exercise2.Views"
+    xmlns:ex3="clr-namespace:AivizMauiProject.Features.Exercise3.Views"
+   
+    x:Class="AivizMauiProject.AppShell"
+    FlyoutBackgroundColor="#b6c9db">
+
+    <!-- Home page (list of exercises) -->
+    <ShellContent
+        Title="Home"
+        ContentTemplate="{DataTemplate home:HomePage}" 
+        Shell.NavBarIsVisible="True"
+        Shell.BackgroundColor="#7093b5"
+        Icon="home.png"/>
+
+
+    <!-- Flyout menu -->
+    <FlyoutItem Title="Exercise1" Icon="checklist.png">
+        <ShellContent Shell.BackgroundColor="#7093b5" ContentTemplate="{DataTemplate ex1:Exercise1}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Exercise2" Icon="checklist.png">
+        <ShellContent Shell.BackgroundColor="#7093b5" Title="Exercise2" ContentTemplate="{DataTemplate ex2:Exercise2}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Exercise3" Icon="checklist.png">
+        <ShellContent Shell.BackgroundColor="#7093b5" Title="Exercise3" ContentTemplate="{DataTemplate ex3:Exercise3}" />
+    </FlyoutItem>
+    <MenuItem Text="Exit" IconImageSource="logout.png" Clicked="OnExitClicked" />
+</Shell>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AivizMauiProject.Features.Exercise1.ViewModels"
+             xmlns:conv="clr-namespace:AivizMauiProject.Features.Exercise1.Converters"
+             x:Class="AivizMauiProject.Features.Exercise1.Views.Exercise1"
+             Title="Exercise 1" >
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <conv:PrimeResultToColorConverter x:Key="ResultToColor"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid BackgroundColor="#EEF5FF" Padding="20">
+        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
+            <Border
+                StrokeThickness="0"
+                BackgroundColor="#EEF5FF"
+                StrokeShape="RoundRectangle 20"
+                Padding="30"
+                WidthRequest="350"
+                >
+                <Border.Shadow>
+                    <Shadow
+                        Brush="Black"
+                        Opacity="0.5"
+                        Offset="5,5"
+                        Radius="10" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="20">
+                    <!-- Entry -->
+                    <Entry x:Name="NumberEntry"
+                           Text="{Binding NumberInput}"
+                           Placeholder="Type a number"
+                           Keyboard="Numeric"
+                           PlaceholderColor="#1B3C53"
+                           TextColor="Black"
+                           BackgroundColor="White"
+                           HeightRequest="50" />
+
+                    <!-- Buttons -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0"
+                                Text="Check Prime"
+                                Command="{Binding CheckPrimeCommand}"
+                                BackgroundColor="#176B87"
+                                TextColor="White"
+                                HeightRequest="50"
+                                CornerRadius="10" />
+
+                        <Button Grid.Column="1"
+                                Text="Clear"
+                                Command="{Binding ClearCommand}"
+                                BackgroundColor="#FF5252"
+                                TextColor="White"
+                                HeightRequest="50"
+                                CornerRadius="10"
+                                Clicked="OnClearClicked"
+                                />
+                    </Grid>
+
+                    <!-- Result Label -->
+                    <Label Text="{Binding ResultMessage}"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="{Binding ResultStatus, Converter={StaticResource ResultToColor}}"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

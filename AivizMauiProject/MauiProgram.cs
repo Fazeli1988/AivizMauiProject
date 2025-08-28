@@ -1,5 +1,6 @@
 ﻿using AivizMauiProject.Features.Exercise2.Services;
 using AivizMauiProject.Features.Exercise2.ViewModels;
+using AivizMauiProject.Features.Exercise2.Views;
 using Microsoft.Extensions.Logging;
 
 namespace AivizMauiProject
@@ -22,6 +23,7 @@ namespace AivizMauiProject
             builder.Logging.AddDebug();
             builder.Services.AddSingleton<IItemService, ItemService>();
             builder.Services.AddTransient<Exercise2ViewModel>();
+            builder.Services.AddTransient<Exercise2>();
 #endif
 
             return builder.Build();

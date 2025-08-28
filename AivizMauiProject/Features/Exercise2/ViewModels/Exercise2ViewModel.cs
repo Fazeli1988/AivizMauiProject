@@ -86,9 +86,7 @@ namespace AivizMauiProject.Features.Exercise2.ViewModels
         public ICommand ItemTappedCommand { get; }
         public ICommand ImageDoubleTappedCommand { get; }
 
-        // This constructor is used if dependency injection (DI) is not configured
-        public Exercise2ViewModel() : this(new ItemService()) { }
-
+        
         // Constructor for dependency injection
         public Exercise2ViewModel(IItemService itemService)
         {

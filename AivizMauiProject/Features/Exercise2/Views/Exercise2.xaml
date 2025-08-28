@@ -16,11 +16,8 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <ContentPage.BindingContext>
-        <vm:Exercise2ViewModel />
-    </ContentPage.BindingContext>
 
-    <AbsoluteLayout>
+        <AbsoluteLayout>
 
         <!-- Main Grid Content -->
         <Grid AbsoluteLayout.LayoutBounds="0,0,1,1"

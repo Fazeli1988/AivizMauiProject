@@ -4,10 +4,12 @@ namespace AivizMauiProject.Features.Exercise2.Views
 {
     public partial class Exercise2 : ContentPage
     {
-        public Exercise2()
+        public Exercise2(Exercise2ViewModel viewModel)
         {
             InitializeComponent();
             SizeChanged += OnPageSizeChanged;
+            BindingContext = viewModel;
+
         }
 
         private void OnPageSizeChanged(object sender, EventArgs e)

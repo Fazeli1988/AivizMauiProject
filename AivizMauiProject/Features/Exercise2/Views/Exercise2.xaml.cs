@@ -32,5 +32,14 @@ namespace AivizMauiProject.Features.Exercise2.Views
             if (confirm)
                 vm.DeleteSelectedItem();
         }
+
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+       
+            (BindingContext as Exercise2ViewModel)?.Load();
+        }
     }
 }

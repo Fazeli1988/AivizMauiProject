@@ -21,14 +21,28 @@ namespace AivizMauiProject.Features.Exercise2.ViewModels
             {
                 if (_selectedItem == value) return;
 
-                if (_selectedItem != null) _selectedItem.IsSelected = false;
+                if (_selectedItem != null)
+                {
+                    _selectedItem.IsSelected = false;
+                    _selectedItem.RaisePropertyChanged(nameof(_selectedItem.IsSelected));
+                }
+
                 _selectedItem = value;
-                if (_selectedItem != null) _selectedItem.IsSelected = true;
+
+                if (_selectedItem != null)
+                {
+                    _selectedItem.IsSelected = true;
+                    _selectedItem.RaisePropertyChanged(nameof(_selectedItem.IsSelected));
+                }
 
                 OnPropertyChanged();
-            }
-        }
 
+                (OpenDetailsCommand as Command)?.ChangeCanExecute();
+                (EditCommand as Command)?.ChangeCanExecute();
+            }
+
+
+        }
         public ICommand OpenDetailsCommand { get; }
 
         private bool _isReadOnlyMode;
@@ -252,6 +266,17 @@ namespace AivizMauiProject.Features.Exercise2.ViewModels
             _itemService.Delete(SelectedItem);
 
             SelectedItem = null;
+        }
+
+        public void Load()
+        {
+            foreach (var item in _allItems)
+            {
+                item.IsSelected = false;
+                item.RaisePropertyChanged(nameof(ItemModel.IsSelected));
+            }
+
+           
         }
     }
 }

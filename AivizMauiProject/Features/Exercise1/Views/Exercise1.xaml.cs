@@ -22,7 +22,7 @@ public partial class Exercise1 : ContentPage
         // Reset or reload data
         if (BindingContext is Exercise1ViewModel vm)
         {
-            vm.Load(); // A method that reloads the ViewModel's data
+            vm.Load(); 
         }
     }
 }
